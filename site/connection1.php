@@ -1,4 +1,7 @@
 <?php
+
+
+
 $host = 'localhost';
 $port = '3307';
 $dbname = 'world';
