@@ -28,9 +28,9 @@ require_once '../../pdo_bind_connection.php';
 
 if (!$_GET) {
     // Preparar la consulta
-    $select = "SELECT language FROM countrylanguage 
-            GROUP BY language 
-            ORDER BY language ASC";
+    $select = "SELECT language AS idioma FROM countrylanguage 
+            GROUP BY idioma 
+            ORDER BY idioma ASC";
     $prep = $pdo->prepare($select);
     // // Vincular el parámetro
     // $prep->bindValue(':country', $country, PDO::PARAM_STR);
@@ -52,10 +52,10 @@ if (isset($_GET['total'])) {
         exit();
     }
     if ($_GET['total'] == 'true') {
-        $select = "SELECT language, SUM(population) AS hablantes 
-            FROM countrylanguage 
-            JOIN country ON countrylanguage.CountryCode = country.Code 
-            GROUP BY language 
+        $select = "SELECT col.language AS idioma, SUM(co.population) AS hablantes 
+            FROM countrylanguage col
+            JOIN country co ON col.CountryCode = co.Code 
+            GROUP BY idioma 
             ORDER BY hablantes DESC";
         $prep = $pdo->prepare($select);
         // Ejecutar la consulta
@@ -79,11 +79,11 @@ if (isset($_GET['total'])) {
     if ($_GET['lang']) {
         $language = $_GET['lang'];
         // Preparar la consulta
-        $select = "SELECT country.Name AS pais, SUM(country.Population) AS hablantes 
-            FROM countrylanguage 
-            JOIN country ON countrylanguage.CountryCode = country.Code 
-            WHERE countrylanguage.Language = :language 
-            GROUP BY country.Name";
+        $select = "SELECT co.Name AS pais, SUM(co.Population) AS hablantes 
+            FROM countrylanguage col
+            JOIN country co ON col.CountryCode = co.Code 
+            WHERE col.Language = :language 
+            GROUP BY co.Name";
         $prep = $pdo->prepare($select);
         // Vincular el parámetro
         $prep->bindValue(':language', $language, PDO::PARAM_STR);
