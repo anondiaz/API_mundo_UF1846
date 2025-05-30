@@ -52,17 +52,20 @@ if (isset($_GET['total'])) {
         exit();
     }
     if ($_GET['total'] == 'true') {
-        $select = "SELECT col.language AS idioma, SUM(co.population) AS hablantes 
-            FROM countrylanguage col
-            JOIN country co ON col.CountryCode = co.Code 
-            GROUP BY idioma 
-            ORDER BY hablantes DESC";
+        $select = "SELECT col.language AS idioma, (SUM(co.Population * col.Percentage / 100)) AS hablantes
+                    FROM countrylanguage col
+                    JOIN country co ON col.CountryCode = co.Code 
+                    GROUP BY idioma
+                    ORDER BY hablantes DESC";
         $prep = $pdo->prepare($select);
         // Ejecutar la consulta
         $prep->execute();
         // Obtener los resultados
         $languages = $prep->fetchAll(PDO::FETCH_ASSOC);
         // Comprobar si se han encontrado países
+        foreach ($languages as &$language) {
+            $language['hablantes'] = round($language['hablantes']); // Redondeamos el número
+        }        
         echo json_encode($languages, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         exit();
     } else {
@@ -79,11 +82,11 @@ if (isset($_GET['total'])) {
     if ($_GET['lang']) {
         $language = $_GET['lang'];
         // Preparar la consulta
-        $select = "SELECT co.Name AS pais, SUM(co.Population) AS hablantes 
-            FROM countrylanguage col
-            JOIN country co ON col.CountryCode = co.Code 
-            WHERE col.Language = :language 
-            GROUP BY co.Name";
+        $select = "SELECT co.Name AS pais, (co.Population * col.Percentage / 100) AS hablantes 
+                    FROM countrylanguage col
+                    JOIN country co ON col.CountryCode = co.Code 
+                    WHERE col.language = :language
+                    ORDER BY hablantes DESC";
         $prep = $pdo->prepare($select);
         // Vincular el parámetro
         $prep->bindValue(':language', $language, PDO::PARAM_STR);
@@ -97,6 +100,9 @@ if (isset($_GET['total'])) {
             echo json_encode(['error' => 'Parámetro "lang" demasiado corto, vacio o no existe.'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
             exit();
         }
+        foreach ($languages as &$language) {
+            $language['hablantes'] = round($language['hablantes']); // Redondeamos el número
+        } 
         echo json_encode($languages, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         exit();
     }
