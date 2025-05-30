@@ -4,10 +4,10 @@ USE world;
 -- con el total de superficie, el total de poblacion y la densidad de población
 
 SELECT 
-    Continent AS continente,
-    SUM(SurfaceArea) AS superficie,
-    SUM(population) AS poblacion,
-    ROUND(SUM(population) / NULLIF(SUM(SurfaceArea), 0), 2) AS densidad
+Continent AS continente,
+SUM(SurfaceArea) AS superficie,
+SUM(population) AS poblacion,
+ROUND(SUM(population) / NULLIF(SUM(SurfaceArea), 0), 2) AS densidad
 FROM country
 GROUP BY Continent
 ORDER BY continente
