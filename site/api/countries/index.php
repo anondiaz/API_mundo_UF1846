@@ -8,7 +8,6 @@ require_once '../../pdo_bind_connection.php';
 
 
 
-
 // En la ruta api/countries?country=nombre_país&cities=true deben aparecer las ciudades de ese país ordenadas 
 // alfabéticamente, con su población y su distrito
 
